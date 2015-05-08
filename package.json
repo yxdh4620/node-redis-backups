@@ -1,0 +1,52 @@
+{
+  "name": "node-redis-backups",
+  "description": "node-redis-backups APP",
+  "version": "0.0.1",
+  "homepage": "https://github.com/yxdh4620/node-redis-backups",
+  "author": {
+    "name": "yxdh4620",
+    "email": "yxdh4620@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/yxdh4620/node-redis-backups.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yxdh4620/node-redis-backups/issues"
+  },
+  "licenses": [
+    {
+      "type": "NA",
+      "url": "https://github.com/yxdh4620/node-redis-backups/blob/master/LICENSE-NA"
+    }
+  ],
+  "main": "./lib/node-redis-backups.js",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "coffee": "coffee -o ./lib/ -cw ./src/",
+    "watch-client": "coffee -b -o ./public/js/site -cw public_src/js",
+    "distill": "distill -i ./src/server.coffee -o ./dist/redis_backups.js",
+    "start": "DEBUG=redis-backups* ./node_modules/.bin/nodemon lib/server.js",
+    "test" : "mocha  --compilers coffee:coffee-script/register tests/"
+  },
+  "dependencies": {
+    "commander": "latest",
+    "underscore": "latest",
+    "debug": "latest",
+    "oss-easy": "0.2.9",
+    "dateformat":"1.0.11",
+    "mkdirp": "0.3.5"
+  },
+  "devDependencies": {
+    "coffee-script": "1.8.0",
+    "commander": "latest",
+    "underscore": "latest",
+    "debug": "latest",
+    "oss-easy": "0.2.9",
+    "dateformat":"1.0.11",
+    "mkdirp": "0.3.5"
+  },
+  "keywords": []
+}
