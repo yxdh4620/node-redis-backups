@@ -75,10 +75,8 @@ start=(config)->
   unless env is 'development'
     process.on 'uncaughtException', (error) -> mailer.deliverServerException(error)
 
-
   redisInfo = require "./redis_info"
   redisInfo.start()
-
 
 start(config)
 
