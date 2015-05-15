@@ -9,7 +9,7 @@ fs = require "fs"
 path = require "path"
 p = require 'commander'
 _ = require 'underscore'
-debuglog = require("debug")("redis-backups::server")
+debuglog = require("debug")("redis-backup::server")
 os = require "os"
 
 pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "../package.json")))
@@ -29,20 +29,18 @@ config = require('./config/config')[env]
 config.version = pkg.version
 config.root = path.resolve __dirname, "../"
 config.backupPath = path.join os.tmpdir(), "#{config.backupDirName||'development'}"
+config.server_name = config.server_name || env
 
 start=(config)->
-  require('./utils/upload_util').init(config)
-  require('./utils/delete_buckup').init(config)
-  backupUtil = require('./utils/backup_util')
-  backupUtil.init(config)
-  backupUtil.start (err) ->
-    return console.dir err if err?
-    deleteBackup = require "./utils/delete_buckup"
-    deleteBackup.deleteBackup (err,stdout) ->
-      return console.error err if err?
-      console.log stdout
-      return
-    return
+  require("./redis_backup").init(config)
+  require('./utils/mailer').init(config)
+
+  mailer = require "./utils/mailer"
+  unless env is 'development'
+    process.on 'uncaughtException', (error) -> mailer.deliverServerException(error)
+
+  redisBackup = require("./redis_backup")
+  redisBackup.start()
   return
 
 start(config)
