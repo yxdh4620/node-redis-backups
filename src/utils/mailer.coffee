@@ -41,7 +41,7 @@ exports.deliverServerException = (error) ->
       "Content-Type": "application/json"
       "X-Postmark-Server-Token" : POSTMARK_APP_KEY
     json :
-      "From" : "donotreply@gamagama.cn"
+      "From" : DEFAULT_FROM
       "To" : TO
       "Subject" : "redis-info::#{SERVER_NAME}::uncaughtException #{(new Date).toLocaleString()}, #{error}"
       "TextBody": JSON.stringify({error:error.toString(), stack: error.stack}, null, 4)
@@ -58,7 +58,7 @@ exports.sendErrors = (errors) ->
       "Content-Type": "application/json"
       "X-Postmark-Server-Token" : POSTMARK_APP_KEY
     json :
-      "From" : "donotreply@gamagama.cn"
+      "From" : DEFAULT_FROM
       "To" : TO
       "Subject" : "redis-info::#{SERVER_NAME}::uncaughtException #{(new Date).toLocaleString()}"
       "TextBody": JSON.stringify(errors, null, 4)

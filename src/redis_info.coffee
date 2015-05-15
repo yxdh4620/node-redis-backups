@@ -65,6 +65,7 @@ INFO =
 
 LOG_PATH = null
 INTERVAL_TIME = 300000
+INTERVAL_MULTIPLE = 1 #间隔时间的倍率， 在出错时适当延长其倍率（防止报警邮件发送过于频繁），
 CMDS = {}
 CMD_KEYS = null
 
@@ -109,6 +110,7 @@ timeout = null
 start = () ->
   clearTimeout(timeout)
   infos = {}
+  errs = []
   async.eachSeries CMD_KEYS, (key, next) =>
     child_process.exec CMDS[key], (err, stdout, stderr)=>
       #执行错误停止并立即报警
@@ -124,26 +126,27 @@ start = () ->
         infos[key] = test
       next()
   , (err) ->
-    errs = []
     if err?
       debuglog err
       errs.push err
       #报警（）
     else
       slowlogLen = parseInt(infos.slowlogLen||0)
-      errs = []
       if slowlogLen >= SLOWLOG.len
         errs.push "slowlog len: #{slowlogLen}"
       info = infos.info
       _validateInfo(infos.info, errs)
       console.log "log_path: #{LOG_PATH}"
       fs.writeFileSync "#{LOG_PATH}/info_#{dateFormat(new Date(), "yyyymmddHHMMss")}.log", JSON.stringify(infos, null, 4)
-      unless _.isEmpty(errs)
-        #发送报警邮件
-        console.dir errs
-        mailer.sendErrors errs
-      timeout = setTimeout start, INTERVAL_TIME
-      return
+    unless _.isEmpty(errs)
+      #发送报警邮件
+      console.dir errs
+      mailer.sendErrors errs
+      INTERVAL_MULTIPLE += INTERVAL_MULTIPLE
+    else
+      INTERVAL_MULTIPLE = 1
+    console.log "#{INTERVAL_MULTIPLE}"
+    timeout = setTimeout start, INTERVAL_TIME*INTERVAL_MULTIPLE
     return
   return
 

@@ -51,10 +51,10 @@ pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "../package.json")))
 ## 更新外部配置
 p.version(pkg.version)
   .option('-e, --environment [type]', 'runtime environment of [development, production, testing]', 'development')
-  .option('-l, --loger [value]', 'runtime log file dir', "#{os.tmpdir()}/redis_info")
+  .option('-l, --loger [value]', 'runtime log file dir', "#{path.join(os.tmpdir(),'redis_info')}")
   .parse(process.argv)
 
-
+console.log "#{path.join(__dirname, "../package.json")}"
 ###
 # bootstrap config
 ###
@@ -64,7 +64,7 @@ config = require('./config/config')[env]
 config.version = pkg.version
 config.root = path.resolve __dirname, "../"
 config.log_path = p.loger || path.join(os.tmpdir(), "redis_info")
-config.server_name = config.server_name || 'development'
+config.server_name = config.server_name || env
 
 
 start=(config)->
